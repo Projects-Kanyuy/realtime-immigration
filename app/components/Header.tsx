@@ -1,166 +1,125 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { Menu, Phone, X } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export default function Header() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+export default function Navbar() {
+  const [isOpen, setOpen] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    {
+      name: "Services",
+      submenu: [
+        { name: "Visas & Permits", href: "/services/visas" },
+        { name: "Travel & Logistics", href: "/services/logistics" },
+        {
+          name: "Company Registration",
+          href: "/services/company-registration",
+        },
+      ],
+    },
+    { name: "Contact", href: "/contact" },
+  ];
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all ${
-        scrolled
-          ? "bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm"
-          : "bg-white border-b border-slate-200"
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Brand */}
-        <Link
-          href="/"
-          className="font-semibold text-blue-800 text-sm md:text-base"
-        >
-          REALTIME IMMIGRATION SOLUTIONS & LOGISTICS
-        </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 text-sm">
-          <Link href="/" className="text-slate-600 hover:text-blue-800">
-            Home
-          </Link>
-
-          <Link href="/about" className="text-slate-600 hover:text-blue-800">
-            About
-          </Link>
-
-          <Link href="/process" className="text-slate-600 hover:text-blue-800">
-            Process
-          </Link>
-
-          {/* Services Dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => setServicesOpen(true)}
-            onMouseLeave={() => setServicesOpen(false)}
+    <nav className="fixed w-full z-50 bg-white border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-20 items-center">
+          {/* Logo */}
+          <Link
+            href="/"
+            className="font-bold text-xl tracking-tight text-slate-900 shrink-0"
           >
-            <button className="text-slate-600 hover:text-blue-800 flex items-center gap-1">
-              Services
-              <span className="text-xs">▾</span>
-            </button>
+            REALTIME{" "}
+            <span className="text-blue-600 font-extrabold">IMMIGRATION</span>
+          </Link>
 
-            <AnimatePresence>
-              {servicesOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  className="absolute left-0 mt-3 w-56 bg-white border border-slate-200 rounded shadow-lg overflow-hidden"
-                >
-                  <Link
-                    href="/services/visas"
-                    className="block px-4 py-3 hover:bg-slate-50 text-slate-700"
-                  >
-                    Visas & Permits
-                  </Link>
-                  <Link
-                    href="/services/logistics"
-                    className="block px-4 py-3 hover:bg-slate-50 text-slate-700"
-                  >
-                    Travel & Logistics
-                  </Link>
-                  <Link
-                    href="/services/company-registration"
-                    className="block px-4 py-3 hover:bg-slate-50 text-slate-700"
-                  >
-                    Company Registration
-                  </Link>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href || "#"}
+                className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+            <Link
+              href="tel:0977205704"
+              className="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-blue-700 transition-all flex items-center gap-2"
+            >
+              <Phone size={16} /> 0977 205 704
+            </Link>
           </div>
 
-          <Link
-            href="/contact"
-            className="ml-4 bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900"
+          {/* Mobile Toggle */}
+          <button
+            onClick={() => setOpen(!isOpen)}
+            className="md:hidden p-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
           >
-            Contact
-          </Link>
-        </nav>
-
-        {/* Mobile Button */}
-        <button
-          className="md:hidden text-2xl"
-          onClick={() => setOpen(true)}
-          aria-label="Open menu"
-        >
-          ☰
-        </button>
+            {isOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
-        {open && (
+        {isOpen && (
           <motion.div
-            className="fixed inset-0 bg-black/40 z-40 md:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setOpen(false)}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white border-b border-slate-200 overflow-hidden"
           >
-            <motion.nav
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25 }}
-              className="absolute right-0 top-0 h-full w-80 bg-white p-6 flex flex-col gap-6"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Link href="/" onClick={() => setOpen(false)}>
-                Home
-              </Link>
-              <Link href="/about" onClick={() => setOpen(false)}>
-                About
-              </Link>
-              <Link href="/process" onClick={() => setOpen(false)}>
-                Process
-              </Link>
-
-              <div className="border-t pt-4">
-                <p className="text-xs text-slate-500 mb-2">Services</p>
-                <Link href="/services/visas" onClick={() => setOpen(false)}>
-                  Visas & Permits
-                </Link>
-                <Link href="/services/logistics" onClick={() => setOpen(false)}>
-                  Travel & Logistics
-                </Link>
+            <div className="px-4 pt-2 pb-8 space-y-1">
+              {navLinks.map((link) => (
+                <div key={link.name}>
+                  {link.submenu ? (
+                    <div className="py-2">
+                      <p className="px-3 text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
+                        {link.name}
+                      </p>
+                      <div className="space-y-1 bg-slate-50 rounded-xl p-2">
+                        {link.submenu.map((sub) => (
+                          <Link
+                            key={sub.name}
+                            href={sub.href}
+                            onClick={() => setOpen(false)}
+                            className="block px-3 py-3 text-base font-semibold text-slate-700 hover:text-blue-600"
+                          >
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      href={link.href!}
+                      onClick={() => setOpen(false)}
+                      className="block px-3 py-4 text-lg font-bold text-slate-900 border-b border-slate-50"
+                    >
+                      {link.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+              <div className="pt-6">
                 <Link
-                  href="/services/company-registration"
-                  onClick={() => setOpen(false)}
+                  href="tel:0977205704"
+                  className="flex items-center justify-center gap-3 w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg"
                 >
-                  Company Registration
+                  <Phone size={20} /> Call Now
                 </Link>
               </div>
-
-              <Link
-                href="/contact"
-                onClick={() => setOpen(false)}
-                className="mt-auto bg-blue-800 text-white text-center py-3 rounded"
-              >
-                Contact
-              </Link>
-            </motion.nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </nav>
   );
 }
