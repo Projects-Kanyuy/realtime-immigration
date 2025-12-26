@@ -1,17 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-
-const navItems = [
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Get Started", href: "#cta" },
-];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -21,99 +17,146 @@ export default function Header() {
 
   return (
     <header
-      className={`
-        sticky top-0 z-50 transition-all duration-300
-        ${
-          scrolled
-            ? "bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm"
-            : "bg-white border-b border-slate-200"
-        }
-      `}
+      className={`sticky top-0 z-50 transition-all ${
+        scrolled
+          ? "bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm"
+          : "bg-white border-b border-slate-200"
+      }`}
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Brand */}
-        <a href="#home" className="flex items-center">
-          <span className="font-semibold tracking-wide text-blue-800 text-sm md:text-base">
-            REALTIME IMMIGRATION SOLUTIONS & LOGISTICS
-          </span>
-        </a>
+        <Link
+          href="/"
+          className="font-semibold text-blue-800 text-sm md:text-base"
+        >
+          REALTIME IMMIGRATION SOLUTIONS & LOGISTICS
+        </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navItems.map((item, idx) => (
-            <motion.a
-              key={item.label}
-              href={item.href}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * idx }}
-              className="text-sm text-slate-600 hover:text-blue-800 transition"
-            >
-              {item.label}
-            </motion.a>
-          ))}
+        <nav className="hidden md:flex items-center gap-8 text-sm">
+          <Link href="/" className="text-slate-600 hover:text-blue-800">
+            Home
+          </Link>
 
-          <motion.a
-            href="#contact"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-sm font-medium text-white bg-blue-800 px-4 py-2 rounded hover:bg-blue-900 transition"
+          <Link href="/about" className="text-slate-600 hover:text-blue-800">
+            About
+          </Link>
+
+          <Link href="/process" className="text-slate-600 hover:text-blue-800">
+            Process
+          </Link>
+
+          {/* Services Dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => setServicesOpen(true)}
+            onMouseLeave={() => setServicesOpen(false)}
+          >
+            <button className="text-slate-600 hover:text-blue-800 flex items-center gap-1">
+              Services
+              <span className="text-xs">▾</span>
+            </button>
+
+            <AnimatePresence>
+              {servicesOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="absolute left-0 mt-3 w-56 bg-white border border-slate-200 rounded shadow-lg overflow-hidden"
+                >
+                  <Link
+                    href="/services/visas"
+                    className="block px-4 py-3 hover:bg-slate-50 text-slate-700"
+                  >
+                    Visas & Permits
+                  </Link>
+                  <Link
+                    href="/services/logistics"
+                    className="block px-4 py-3 hover:bg-slate-50 text-slate-700"
+                  >
+                    Travel & Logistics
+                  </Link>
+                  <Link
+                    href="/services/company-registration"
+                    className="block px-4 py-3 hover:bg-slate-50 text-slate-700"
+                  >
+                    Company Registration
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <Link
+            href="/contact"
+            className="ml-4 bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900"
           >
             Contact
-          </motion.a>
+          </Link>
         </nav>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Button */}
         <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden text-slate-700 text-2xl"
-          aria-label="Toggle menu"
+          className="md:hidden text-2xl"
+          onClick={() => setOpen(true)}
+          aria-label="Open menu"
         >
-          {open ? "✕" : "☰"}
+          ☰
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="md:hidden fixed inset-0 bg-black/30 z-40"
+            className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setOpen(false)}
           >
             <motion.nav
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="absolute right-0 top-0 w-3/4 max-w-xs h-full bg-white shadow-lg flex flex-col px-6 py-8 gap-6"
+              transition={{ type: "spring", damping: 25 }}
+              className="absolute right-0 top-0 h-full w-80 bg-white p-6 flex flex-col gap-6"
+              onClick={(e) => e.stopPropagation()}
             >
-              {navItems.map((item, idx) => (
-                <motion.a
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 * idx }}
-                  className="text-lg font-medium text-slate-700 hover:text-blue-800 transition py-2"
-                >
-                  {item.label}
-                </motion.a>
-              ))}
+              <Link href="/" onClick={() => setOpen(false)}>
+                Home
+              </Link>
+              <Link href="/about" onClick={() => setOpen(false)}>
+                About
+              </Link>
+              <Link href="/process" onClick={() => setOpen(false)}>
+                Process
+              </Link>
 
-              <motion.a
-                href="#contact"
+              <div className="border-t pt-4">
+                <p className="text-xs text-slate-500 mb-2">Services</p>
+                <Link href="/services/visas" onClick={() => setOpen(false)}>
+                  Visas & Permits
+                </Link>
+                <Link href="/services/logistics" onClick={() => setOpen(false)}>
+                  Travel & Logistics
+                </Link>
+                <Link
+                  href="/services/company-registration"
+                  onClick={() => setOpen(false)}
+                >
+                  Company Registration
+                </Link>
+              </div>
+
+              <Link
+                href="/contact"
                 onClick={() => setOpen(false)}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="mt-auto text-center font-medium text-white bg-blue-800 px-4 py-3 rounded hover:bg-blue-900 transition"
+                className="mt-auto bg-blue-800 text-white text-center py-3 rounded"
               >
                 Contact
-              </motion.a>
+              </Link>
             </motion.nav>
           </motion.div>
         )}
