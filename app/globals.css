@@ -1,26 +1,118 @@
 @import "tailwindcss";
 
+/* ================================
+   Brand Design Tokens
+   ================================ */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a; /* slate-900 */
+  --primary: #1e40af; /* trust blue */
+  --primary-hover: #1e3a8a; /* slightly darker */
+  --muted: #475569; /* slate-600 */
+  --border: #e2e8f0; /* slate-200 */
+  --accent: #3b82f6; /* blue-500 accent */
 }
 
+/* Tailwind inline theme bridge */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ================================
+   Base Styles
+   ================================ */
+html {
+  scroll-behavior: smooth; /* smooth scroll for all anchor links */
+  scroll-padding-top: 4rem; /* offset for sticky headers */
+  scroll-behavior: smooth;
+  scroll-snap-type: y proximity; /* optional for snap sections */
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ================================
+   Typography
+   ================================ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--foreground);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+p,
+span,
+li {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ================================
+   Links & Buttons
+   ================================ */
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+a:hover,
+a:focus {
+  color: var(--primary-hover);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+button {
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+button:hover,
+button:focus {
+  transform: translateY(-1px);
+}
+
+/* ================================
+   Utility Enhancements
+   ================================ */
+section {
+  scroll-margin-top: 5rem; /* offset sticky headers */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Optional: smooth fade-in animation for elements */
+.fade-in {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
 }
