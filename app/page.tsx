@@ -34,8 +34,7 @@ export default async function Home() {
         subheading={data.servicesSubheading}
         services={data.servicesList}
       />
-      <WhyChooseUs
-      />
+      <WhyChooseUs />
       <Contact
         heading={data.contactHeading}
         description={data.contactDescription}
