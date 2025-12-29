@@ -35,10 +35,6 @@ export default async function Home() {
         services={data.servicesList}
       />
       <WhyChooseUs
-        heading={data.trustHeading}
-        description={data.trustDescription}
-        points={data.trustPoints}
-        ctaText={data.trustCtaText}
       />
       <Contact
         heading={data.contactHeading}
