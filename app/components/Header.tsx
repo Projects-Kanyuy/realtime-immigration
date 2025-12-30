@@ -1,11 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Phone, X } from "lucide-react";
+import { ChevronDown, Menu, Phone, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function Navbar() {
+export default function Navbar({ phoneNumber }: { phoneNumber?: string }) {
   const [isOpen, setOpen] = useState(false);
 
   const navLinks = [
@@ -41,19 +41,48 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href || "#"}
-                className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
-              >
-                {link.name}
-              </Link>
+              <div key={link.name} className="relative group">
+                {link.submenu ? (
+                  <>
+                    {/* Parent with Dropdown */}
+                    <button className="flex items-center gap-1 text-sm font-medium text-slate-600 group-hover:text-blue-600 transition-colors py-8">
+                      {link.name}
+                      <ChevronDown
+                        size={14}
+                        className="group-hover:rotate-180 transition-transform"
+                      />
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    <div className="absolute top-full left-0 w-64 bg-white border border-slate-100 shadow-xl rounded-xl py-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform translate-y-2 group-hover:translate-y-0">
+                      {link.submenu.map((sub) => (
+                        <Link
+                          key={sub.name}
+                          href={sub.href}
+                          className="block px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-colors"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  /* Standard Link */
+                  <Link
+                    href={link.href || "#"}
+                    className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors py-8"
+                  >
+                    {link.name}
+                  </Link>
+                )}
+              </div>
             ))}
+
             <Link
-              href="tel:0977205704"
+              href={`tel:${phoneNumber?.replace(/\s/g, "") || "0977205704"}`}
               className="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-blue-700 transition-all flex items-center gap-2"
             >
-              <Phone size={16} /> 0977 205 704
+              <Phone size={16} /> {phoneNumber || "0977 205 704"}
             </Link>
           </div>
 
@@ -67,7 +96,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu (Your existing logic is fine) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -108,14 +137,6 @@ export default function Navbar() {
                   )}
                 </div>
               ))}
-              <div className="pt-6">
-                <Link
-                  href="tel:0977205704"
-                  className="flex items-center justify-center gap-3 w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg"
-                >
-                  <Phone size={20} /> Call Now
-                </Link>
-              </div>
             </div>
           </motion.div>
         )}
